@@ -1,0 +1,9 @@
+node_modules
+dist
+*.log
+.DS_Store
+package-lock.json
+MINTLIFY_CONFIGURATION.md
+scripts/sync-sdk.js
+scripts/deploy-sdk.js
+scripts/version-manager.js

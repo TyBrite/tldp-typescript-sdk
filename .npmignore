@@ -1,0 +1,13 @@
+# Publish only the compiled output (dist/) + package.json + README + LICENSE.
+src
+scripts
+node_modules
+dist/**/*.map
+*.log
+.DS_Store
+tsconfig.json
+.gitignore
+.npmignore
+MINTLIFY_CONFIGURATION.md
+docs
+examples
