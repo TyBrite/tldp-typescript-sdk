@@ -4,17 +4,24 @@
   "description": "Official TypeScript SDK for TLDP — the Tybrite Logistics Developer Platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "generate": "openapi --input ../cloudflare-workers/openapi.yaml --output ./src --client fetch --name TLDP --useOptions && node scripts/post-generate.js",
     "build": "tsc",
-    "clean": "rimraf src dist",
-    "sync": "node scripts/sync-sdk.js",
-    "version:update": "node scripts/version-manager.js",
-    "deploy": "node scripts/deploy-sdk.js",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["tybrite", "tldp", "logistics", "api", "sdk", "typescript", "openapi", "shipping", "courier"],
+  "keywords": [
+    "tybrite",
+    "tldp",
+    "logistics",
+    "api",
+    "sdk",
+    "typescript",
+    "openapi",
+    "shipping",
+    "courier"
+  ],
   "author": "Tybrite Labs",
   "license": "MIT",
   "homepage": "https://tldp.tybritelabs.com/docs",
