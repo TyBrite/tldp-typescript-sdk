@@ -28,9 +28,9 @@ npm install @tybrite-labs/tldp-sdk
 ```typescript
 import { TLDP } from '@tybrite-labs/tldp-sdk';
 
-// Initialize the client with your secret key (server-side only).
+// Rates are read-only — a publishable key is enough (safe client-side).
 const client = new TLDP({
-  apiKey: 'tybrite_sk_test_YOUR_API_KEY',
+  apiKey: 'tybrite_pk_test_YOUR_API_KEY',
 });
 
 // Quote a delivery across your enabled couriers.
@@ -40,6 +40,7 @@ const { quotes } = await client.rates.calculateRates({
     destination: { city: 'Mombasa' },
     weight_kg: 2.5,
     service_level: 'standard',
+    delivery_method: 'last_mile',
   },
 });
 
@@ -72,7 +73,7 @@ the client instance (e.g. `client.orders`).
 
 - **`orders`** — create, fetch, update, cancel, and fulfil customer orders (standard or on-demand), and get on-demand quotes.
 - **`shipments`** — create, fetch, and cancel shipments directly.
-- **`rates`** — calculate delivery rates across your enabled couriers and list serviceable zones.
+- **`rates`** — calculate delivery rates across your enabled couriers (by city, named zone, exact coordinates, or place name) and list serviceable zones.
 - **`tracking`** — public tracking by number plus detailed shipment tracking events.
 - **`proofOfDelivery`** — retrieve proof of delivery (photo / OTP / signature) for a delivered shipment.
 - **`returns`** — request, approve, reject, receive, and resolve returns and exchanges.
@@ -105,6 +106,29 @@ const fulfilled = await client.orders.fulfilOrder({
 });
 
 console.log(fulfilled.tracking_number);
+```
+
+### Rates by exact location
+
+Pass coordinates or a free-form place for either endpoint and each courier's price is
+matched to the bounded service area the point falls in — more precise than a city name.
+Coordinates win; a `place` string is resolved to coordinates for you. For **door delivery**
+(`delivery_method: 'last_mile'`) a destination beyond the service area may add a
+`distance_overage` to `breakdown` — a courier-set surcharge for the extra distance. Pickup
+at a station is never charged it.
+
+```typescript
+const { quotes } = await client.rates.calculateRates({
+  requestBody: {
+    origin:      { city: 'Nairobi', lat: -1.2864, lng: 36.8172 },  // exact point
+    destination: { city: 'Nairobi', place: 'Upperhill, Nairobi' }, // resolved to a point
+    weight_kg: 1.2,
+    delivery_method: 'last_mile',
+  },
+});
+
+const q = quotes[0];
+console.log(q.total_price, q.breakdown.distance_overage); // e.g. 350, 50
 ```
 
 ### Track a shipment (public)

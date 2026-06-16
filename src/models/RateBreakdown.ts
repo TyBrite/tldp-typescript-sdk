@@ -11,6 +11,10 @@ export type RateBreakdown = {
         type?: string;
         amount?: number;
     }>;
+    /**
+     * Door-delivery surcharge for distance beyond the courier's service area (0 for pickup or within the area).
+     */
+    distance_overage?: number;
     courier_subtotal?: number;
     platform_fee?: number;
 };

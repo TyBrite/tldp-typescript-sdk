@@ -22,7 +22,7 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-    BASE: 'https://api.tybritelabs.com',
+    BASE: 'https://api.tybritelabs.com/logistics',
     VERSION: '1.0.0',
     WITH_CREDENTIALS: false,
     CREDENTIALS: 'include',

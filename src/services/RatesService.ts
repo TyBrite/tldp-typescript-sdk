@@ -15,6 +15,19 @@ export class RatesService {
      * `total_price`. Each `quote_id` is valid for 2 minutes and is required to
      * create a shipment.
      *
+     * **Precise pricing by location.** For each endpoint you may pass `zone` (a named
+     * pricing area), exact `lat`/`lng` coordinates, or a free-form `place` string —
+     * coordinates take precedence, then a place name is resolved to coordinates
+     * automatically. When coordinates are supplied, each courier's price is matched to
+     * the bounded service area the point falls in (more accurate than a city name alone).
+     * `city` is always required as the coarse filter.
+     *
+     * **Door-delivery distance charge.** When `delivery_method` is `last_mile` (door
+     * delivery) and the destination lies beyond a courier's service area, the quote may
+     * include a `distance_overage` — a courier-set surcharge for distance past the area,
+     * shown in `breakdown.distance_overage`. Pickup-station deliveries are never charged
+     * this surcharge.
+     *
      * @returns any Available quotes.
      * @throws ApiError
      */
@@ -24,15 +37,49 @@ export class RatesService {
         requestBody: {
             origin: {
                 city: string;
+                /**
+                 * Named pricing area within the city.
+                 */
                 zone?: string;
+                /**
+                 * Free-form place/area, resolved to coordinates.
+                 */
+                place?: string;
+                /**
+                 * Latitude; takes precedence over place/zone for area matching.
+                 */
+                lat?: number;
+                /**
+                 * Longitude; takes precedence over place/zone for area matching.
+                 */
+                lng?: number;
             };
             destination: {
                 city: string;
+                /**
+                 * Named pricing area within the city.
+                 */
                 zone?: string;
+                /**
+                 * Free-form place/area, resolved to coordinates.
+                 */
+                place?: string;
+                /**
+                 * Latitude; takes precedence over place/zone for area matching.
+                 */
+                lat?: number;
+                /**
+                 * Longitude; takes precedence over place/zone for area matching.
+                 */
+                lng?: number;
             };
             weight_kg: number;
             declared_value?: number;
             service_level?: ServiceLevel;
+            /**
+             * `last_mile` = delivered to the recipient's door (may incur a distance charge); `pickup` = collected at a pickup station (no distance charge).
+             */
+            delivery_method?: 'last_mile' | 'pickup';
             special_flags?: Array<string>;
         },
     }): CancelablePromise<{
