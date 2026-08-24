@@ -5,6 +5,7 @@
 import type { DeliveryMethod } from '../models/DeliveryMethod';
 import type { OnDemandTier } from '../models/OnDemandTier';
 import type { OrderItemInput } from '../models/OrderItemInput';
+import type { Pagination } from '../models/Pagination';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
 export class OrdersService {
@@ -17,11 +18,15 @@ export class OrdersService {
      * standalone order store — items are auditable and visible across the platform).
      * Requires a secret (sk_) key. Emits an `order.created` webhook.
      *
+     * Pass an `Idempotency-Key` header to make retries safe: repeating the same key
+     * returns the original order instead of creating a duplicate.
+     *
      * @returns any Order created.
      * @throws ApiError
      */
     public createOrder({
         requestBody,
+        idempotencyKey,
     }: {
         requestBody: {
             /**
@@ -56,12 +61,19 @@ export class OrdersService {
                 lng?: number;
             };
         },
+        /**
+         * A unique key (UUID) that makes a write request safely retryable.
+         */
+        idempotencyKey?: string,
     }): CancelablePromise<{
         order?: Record<string, any>;
     }> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/v1/orders',
+            headers: {
+                'Idempotency-Key': idempotencyKey,
+            },
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -75,14 +87,38 @@ export class OrdersService {
     }
     /**
      * List your orders
-     * @returns any Orders.
+     * List your orders, newest first. Page with `limit` (default 50, max 100) and `offset`;
+     * the response's `pagination` block tells you whether more pages exist and the
+     * `next_offset` to request.
+     *
+     * @returns any A page of orders.
      * @throws ApiError
      */
-    public listOrders(): CancelablePromise<Record<string, any>> {
+    public listOrders({
+        limit = 50,
+        offset,
+    }: {
+        /**
+         * Maximum number of items to return (1–100). Defaults to 50.
+         */
+        limit?: number,
+        /**
+         * Number of items to skip, for paging. Defaults to 0. Use the response's `pagination.next_offset` to fetch the next page.
+         */
+        offset?: number,
+    }): CancelablePromise<{
+        orders?: Array<Record<string, any>>;
+        pagination?: Pagination;
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/v1/orders',
+            query: {
+                'limit': limit,
+                'offset': offset,
+            },
             errors: {
+                400: `Invalid request — missing or malformed parameters.`,
                 401: `Missing or invalid API key.`,
                 429: `Rate limit exceeded for the current window.`,
                 500: `Unexpected server error.`,

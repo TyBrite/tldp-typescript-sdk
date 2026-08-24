@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { Address } from '../models/Address';
 import type { Parcel } from '../models/Parcel';
+import type { RecipientAddress } from '../models/RecipientAddress';
 import type { Shipment } from '../models/Shipment';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -24,7 +25,7 @@ export class ShipmentsService {
     }: {
         requestBody: {
             rate_quote_id: string;
-            recipient: Address;
+            recipient: RecipientAddress;
             sender?: Address;
             parcel?: Parcel;
             payment?: {

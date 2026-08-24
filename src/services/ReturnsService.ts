@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Pagination } from '../models/Pagination';
 import type { ReturnItemInput } from '../models/ReturnItemInput';
 import type { ReturnReason } from '../models/ReturnReason';
 import type { ReturnResolution } from '../models/ReturnResolution';
@@ -52,14 +53,38 @@ export class ReturnsService {
     }
     /**
      * List your returns
-     * @returns any Returns.
+     * List your returns, newest first. Page with `limit` (default 50, max 100) and `offset`;
+     * the response's `pagination` block tells you whether more pages exist and the
+     * `next_offset` to request.
+     *
+     * @returns any A page of returns.
      * @throws ApiError
      */
-    public listReturns(): CancelablePromise<Record<string, any>> {
+    public listReturns({
+        limit = 50,
+        offset,
+    }: {
+        /**
+         * Maximum number of items to return (1–100). Defaults to 50.
+         */
+        limit?: number,
+        /**
+         * Number of items to skip, for paging. Defaults to 0. Use the response's `pagination.next_offset` to fetch the next page.
+         */
+        offset?: number,
+    }): CancelablePromise<{
+        returns?: Array<Record<string, any>>;
+        pagination?: Pagination;
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/v1/returns',
+            query: {
+                'limit': limit,
+                'offset': offset,
+            },
             errors: {
+                400: `Invalid request — missing or malformed parameters.`,
                 401: `Missing or invalid API key.`,
                 429: `Rate limit exceeded for the current window.`,
                 500: `Unexpected server error.`,
@@ -134,6 +159,7 @@ export class ReturnsService {
     }
     /**
      * Reject a return
+     * Reject a requested return with an optional note to the customer. Requires a secret (sk_) key. Emits `return.rejected`.
      * @returns any Rejected.
      * @throws ApiError
      */

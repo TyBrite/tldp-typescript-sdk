@@ -28,6 +28,7 @@ export class ProofOfDeliveryService {
                 'shipmentId': shipmentId,
             },
             errors: {
+                400: `Invalid request — missing or malformed parameters.`,
                 401: `Missing or invalid API key.`,
                 404: `The requested resource does not exist (or isn't yours).`,
                 429: `Rate limit exceeded for the current window.`,

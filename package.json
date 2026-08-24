@@ -9,6 +9,8 @@
   ],
   "scripts": {
     "build": "tsc",
+    "version:update": "node scripts/version-manager.js",
+    "deploy": "node scripts/deploy-sdk.js",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
