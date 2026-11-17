@@ -11,6 +11,7 @@
     "build": "tsc",
     "version:update": "node scripts/version-manager.js",
     "deploy": "node scripts/deploy-sdk.js",
+    "sync:docs": "node scripts/sync-docs.js",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -26,7 +27,7 @@
   ],
   "author": "Tybrite Labs",
   "license": "MIT",
-  "homepage": "https://tldp.tybritelabs.com/docs",
+  "homepage": "https://docs.tybritelabs.com/tldp",
   "repository": {
     "type": "git",
     "url": "https://github.com/TyBrite/tldp-typescript-sdk.git"

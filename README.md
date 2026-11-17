@@ -427,7 +427,7 @@ try {
 
 ## Documentation
 
-Full API reference and guides: **https://tldp.tybritelabs.com/docs**
+Full API reference and guides: **https://docs.tybritelabs.com/tldp**
 
 ## License
 
